@@ -1,8 +1,11 @@
 package com.order.inventory.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.order.inventory.entity.InventoryEntity;
+import com.order.inventory.entity.OutboxEvent;
 import com.order.inventory.model.OrderMessage;
 import com.order.inventory.repository.InventoryRepository;
+import com.order.inventory.repository.OutboxEventRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,11 +21,17 @@ public class InventoryConsumer {
     @Autowired
     private InventoryRepository inventoryRepository;
 
-    @Autowired
-    private PaymentClient paymentClient;
+//    @Autowired
+//    private PaymentClient paymentClient;
 
     @Autowired
     private JmsTemplate jmsTemplate;
+
+    @Autowired
+    private OutboxEventRepository outboxRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Value("${app.mq.dead-letter-queue:DEV.DEAD.LETTER.QUEUE}")
     private String dlq;
@@ -48,13 +57,23 @@ public class InventoryConsumer {
 
             // Step 3: Call Payment service (Circuit Breaker here)
             // Step 3: Call Payment service (Circuit Breaker here)
-            paymentClient.callPayment(order);
+            //paymentClient.callPayment(order);
 
             // Step 4: Forward order to Payment Queue
-//            jmsTemplate.convertAndSend(
-//                    "DEV.PAYMENT.Q",
-//                    order
-//            );
+            jmsTemplate.convertAndSend(
+                    "DEV.PAYMENT.Q",
+                    order
+            );
+            OutboxEvent event = new OutboxEvent();
+
+            event.setOrderId(order.getOrderId());
+            event.setTopic("DEV.PAYMENT.Q");
+            event.setPayload(
+                    objectMapper.writeValueAsString(order)
+            );
+            event.setStatus("PENDING");
+
+            //outboxRepository.save(event);
 
             processedCount.incrementAndGet();
 
@@ -63,22 +82,14 @@ public class InventoryConsumer {
 //                    order.getOrderId()
 //            );
 
-        } catch (Exception e) {
+        }
 
-            log.error(
-                    "Inventory failed {}",
-                    order.getOrderId()
-            );
+        catch (Exception e) {
 
-            failedCount.incrementAndGet();
+            log.error("Inventory failed {}", order.getOrderId());
 
             jmsTemplate.convertAndSend(
-                    "DEV.ORDER.FAILED",
-                    order
-            );
-
-            jmsTemplate.convertAndSend(
-                    dlq,
+                    "DEV.ORDER.FAILED.INVENTORY",
                     order
             );
 
@@ -87,6 +98,7 @@ public class InventoryConsumer {
                     order.getOrderId()
             );
         }
+
     }
 
     public int getProcessedCount() {

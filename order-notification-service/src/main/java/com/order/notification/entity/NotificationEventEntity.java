@@ -1,9 +1,11 @@
 package com.order.notification.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @Table(name="notification_events")
 public class NotificationEventEntity {

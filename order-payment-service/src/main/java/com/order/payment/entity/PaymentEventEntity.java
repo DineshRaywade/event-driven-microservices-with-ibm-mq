@@ -1,11 +1,14 @@
 package com.order.payment.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="payment_events")
+@Table(name = "payment_events")
+@Data
+
 public class PaymentEventEntity {
 
     @Id

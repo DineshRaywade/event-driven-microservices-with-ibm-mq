@@ -1,4 +1,4 @@
-package com.order.inventory.entity;
+package com.order.payment.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
