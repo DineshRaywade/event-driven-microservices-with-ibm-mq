@@ -1,0 +1,20 @@
+{
+  "name": "order-payment-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "order-payment-db",
+    "database.port": "5432",
+    "database.user": "postgres",
+    "database.password": "postgres",
+    "database.dbname": "payment_db",
+    "topic.prefix": "order_payment",
+    "schema.include.list": "public",
+    "table.include.list": "public.outbox_events",
+    "plugin.name": "pgoutput",
+    "slot.name": "order_payment_outbox_slot",
+    "publication.name": "debezium_payment_publication",
+    "heartbeat.interval.ms": "5000",
+    "snapshot.mode": "initial",
+    "offset.flush.interval.ms": "0"
+  }
+}

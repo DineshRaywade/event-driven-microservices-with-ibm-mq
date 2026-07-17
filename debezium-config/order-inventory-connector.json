@@ -1,0 +1,20 @@
+{
+  "name": "order-inventory-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "order-inventory-db",
+    "database.port": "5432",
+    "database.user": "postgres",
+    "database.password": "postgres",
+    "database.dbname": "inventory_db",
+    "topic.prefix": "order_inventory",
+    "schema.include.list": "public",
+    "table.include.list": "public.outbox_events",
+    "plugin.name": "pgoutput",
+    "slot.name": "order_inventory_outbox_slot",
+    "publication.name": "debezium_inventory_publication",
+    "heartbeat.interval.ms": "5000",
+    "snapshot.mode": "initial",
+    "offset.flush.interval.ms": "0"
+  }
+}
