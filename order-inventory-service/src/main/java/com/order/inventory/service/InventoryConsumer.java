@@ -56,14 +56,13 @@ public class InventoryConsumer {
             log.info("Inventory reserved for orderId={}", order.getOrderId());
 
             // Step 3: Call Payment service (Circuit Breaker here)
-            // Step 3: Call Payment service (Circuit Breaker here)
             //paymentClient.callPayment(order);
 
             // Step 4: Forward order to Payment Queue
-            jmsTemplate.convertAndSend(
-                    "DEV.PAYMENT.Q",
-                    order
-            );
+//            jmsTemplate.convertAndSend(
+//                    "DEV.PAYMENT.Q",
+//                    order
+//            );
             OutboxEvent event = new OutboxEvent();
 
             event.setOrderId(order.getOrderId());
@@ -73,7 +72,7 @@ public class InventoryConsumer {
             );
             event.setStatus("PENDING");
 
-            //outboxRepository.save(event);
+            outboxRepository.save(event);
 
             processedCount.incrementAndGet();
 
