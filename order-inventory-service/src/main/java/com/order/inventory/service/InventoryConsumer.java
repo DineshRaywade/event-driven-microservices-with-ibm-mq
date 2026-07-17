@@ -21,8 +21,8 @@ public class InventoryConsumer {
     @Autowired
     private InventoryRepository inventoryRepository;
 
-//    @Autowired
-//    private PaymentClient paymentClient;
+    @Autowired
+    private PaymentClient paymentClient;
 
     @Autowired
     private JmsTemplate jmsTemplate;
@@ -56,6 +56,7 @@ public class InventoryConsumer {
             log.info("Inventory reserved for orderId={}", order.getOrderId());
 
             // Step 3: Call Payment service (Circuit Breaker here)
+<<<<<<< HEAD
             //paymentClient.callPayment(order);
 
             // Step 4: Forward order to Payment Queue
@@ -63,6 +64,11 @@ public class InventoryConsumer {
 //                    "DEV.PAYMENT.Q",
 //                    order
 //            );
+=======
+            paymentClient.callPayment(order);
+
+            // Step 4: Forward order to Payment Queue
+>>>>>>> b6484a1 (Created the queues in docker and then made the whole container of debezium which contains the containers of ibm mq and kafka)
             OutboxEvent event = new OutboxEvent();
 
             event.setOrderId(order.getOrderId());

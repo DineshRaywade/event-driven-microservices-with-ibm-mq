@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ibm-mq-with-saga-cb-retry
 # IBM MQ Saga Pattern POC
 
@@ -303,3 +304,58 @@ four-diff-services/
 ## Author
 
 Prachi Ghatole
+=======
+# Order Processing System (Enhanced)
+
+This is an advanced multi-module Spring Boot project featuring high-throughput order processing, Change Data Capture (CDC), and resilient microservices architecture.
+
+## New Features Added
+- **Swagger/OpenAPI 3**: Interactive API documentation for all services.
+- **Debezium CDC**: Reliable event relaying using the Outbox pattern with Debezium and Kafka Connect.
+- **Resilience4j**: Circuit Breakers and Retries for inter-service communication.
+- **Kafka Integration**: Event-driven architecture for outbox event processing.
+
+## Project Structure
+- `order-producer-service`: Entry point for orders, uses Outbox pattern.
+- `order-inventory-service`: Manages inventory, consumes orders from MQ.
+- `order-payment-service`: Processes payments with Resilience4j protection.
+- `order-notification-service`: Sends notifications.
+
+## Prerequisites
+- Java 17
+- Docker & Docker Compose
+- Maven
+
+## Quick Start
+
+1. **Start Infrastructure**:
+   ```bash
+   docker-compose up -d
+   ```
+   This starts PostgreSQL databases, IBM MQ, Kafka, Zookeeper, and Debezium Connect.
+
+2. **Register Debezium Connectors**:
+   Wait for the containers to be healthy (especially `debezium-connect`), then run:
+   ```bash
+   ./register-connectors.sh
+   ```
+
+3. **Access Swagger UI**:
+   - Producer Service: `http://localhost:8080/swagger-ui.html`
+   - Inventory Service: `http://localhost:8081/swagger-ui.html`
+   - Payment Service: `http://localhost:8082/swagger-ui.html`
+   - Notification Service: `http://localhost:8083/swagger-ui.html`
+
+4. **Monitor Kafka**:
+   - Kafka UI: `http://localhost:8084`
+
+5. **Import to IntelliJ**:
+   - Open IntelliJ IDEA.
+   - File -> Open -> Select the project root folder.
+   - Wait for Maven to sync dependencies.
+
+## Resilience Features
+- **Circuit Breaker**: Prevents cascading failures when downstream services (like Payment or Notification) are down.
+- **Retry**: Automatically retries failed operations before giving up.
+- **Outbox Pattern**: Ensures "at-least-once" delivery of messages by saving them to a DB table first and using Debezium to relay them to Kafka/MQ.
+>>>>>>> b6484a1 (Created the queues in docker and then made the whole container of debezium which contains the containers of ibm mq and kafka)
